@@ -9,15 +9,15 @@ public class Program {
 
 		int number = scanner.nextInt();
 
-		boolean isPrime = true;
-
-		int iterationCount = 0;
-
 		if (number <= 1) {
 			System.out.println("IllegalArgument");
 			System.exit(-1);
 		}
 
+		boolean isPrime = true;
+
+		int iterationCount = 0;
+		
 		for (int i = 2; i <= Math.sqrt(number); i++) {
 			iterationCount++;
 

@@ -1,64 +1,86 @@
 package ex04;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 public class Program {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the text: ");
-        String text = scanner.nextLine();
+        String input = scanner.nextLine();
         scanner.close();
 
-        Map<Character, Integer> charCount = new HashMap<>();
+        Map<Character, Integer> frequencyMap = new HashMap<>();
 
-        // Count character occurrences
-        for (char c : text.toCharArray()) {
-            if (Character.isLetterOrDigit(c)) {
-                charCount.put(c, charCount.getOrDefault(c, 0) + 1);
-            }
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            frequencyMap.put(c, frequencyMap.getOrDefault(c, 0) + 1);
         }
 
-        // Sort characters by occurrence in descending order
-        List<Character> sortedChars = new ArrayList<>(charCount.keySet());
-        sortedChars.sort((a, b) -> {
-            int countDiff = charCount.get(b) - charCount.get(a);
-            if (countDiff == 0) {
-                return a - b;
-            }
-            return countDiff;
-        });
+        char[] chartChars = new char[10];
+        int[] chartCounts = new int[10];
 
-        // Find the maximum count
-        int maxCount = 0;
-        for (int count : charCount.values()) {
-            maxCount = Math.max(maxCount, count);
-        }
+        for (char c : frequencyMap.keySet()) {
+            int count = frequencyMap.get(c);
 
-        // Display the histogram
-        for (int i = maxCount; i > 0; i--) {
-            for (Character c : sortedChars.subList(0, Math.min(sortedChars.size(), 10))) {
-                int count = charCount.getOrDefault(c, 0);
-                if (count >= i) {
-                    System.out.print("# ");
-                } else {
-                    System.out.print("  ");
+            for (int i = 0; i < 10; i++) {
+                if (count > chartCounts[i]) {
+                    for (int j = 9; j > i; j--) {
+                        chartCounts[j] = chartCounts[j - 1];
+                        chartChars[j] = chartChars[j - 1];
+                    }
+
+                    chartCounts[i] = count;
+                    chartChars[i] = c;
+
+                    break;
                 }
             }
-            System.out.println();
         }
 
-        for (Character c : sortedChars.subList(0, Math.min(sortedChars.size(), 10))) {
-            System.out.print(c + " ");
-        }
-        System.out.println();
+		for (int i = 0; i < 10; i++) {
+			if (chartCounts[i] > 999) {
+				chartCounts[i] = 999;
+			}
+		}
 
-        for (Character c : sortedChars.subList(0, Math.min(sortedChars.size(), 10))) {
-            int count = charCount.getOrDefault(c, 0);
-            if (count >= 10) {
-                System.out.print(count);
-            } else {
-                System.out.print(count + " ");
-            }
+        Object[][] chartMatrix = new Object[13][11];
+
+        for (int col = 0; col < 10; col++) {
+            int count = chartCounts[col];
+            int row = 12;
+
+            chartMatrix[row][col] = chartChars[col];
+
+			if (chartCounts[0] > 10) {
+				int max = chartCounts[0];
+				count =  count * 10 / max;
+			}
+			row--;
+            while (count > 0) {
+				chartMatrix[row--][col] = "#";
+				count--;
+			}
+
+			chartMatrix[row++][col] = chartCounts[col];
         }
+
+		for (int row = 0; row < 13; row++) {
+			boolean isNotEmpty = false;
+
+			for (int col = 0; col < 11; col++) {
+				Object value = chartMatrix[row][col];
+				if (value != null && !(value.equals(0))) {
+					System.out.print(value + " ");
+					isNotEmpty = true;
+				}
+			}
+
+			if (isNotEmpty) {
+				System.out.println();
+			}
+		}
+
+
     }
 }
